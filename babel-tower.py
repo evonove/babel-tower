@@ -28,7 +28,7 @@ def apply_translations(csv_path, xml_path, from_lang_key, to_lang_key):
             # Saves all message elements for faster lookup
             messages = {}
             for message in context.findall("message"):
-                text = "\\n".join(message.find("source").text.split("\n"))
+                text = "\\n".join(message.find("source").text.split("\n")).strip()
                 messages[text] = message
             break
 
@@ -37,14 +37,14 @@ def apply_translations(csv_path, xml_path, from_lang_key, to_lang_key):
         if line[from_lang_key] == "":
             continue
 
-        from_text = line[from_lang_key]
+        from_text = line[from_lang_key].strip()
         to_text = line[to_lang_key].strip()
 
         message = messages.get(from_text)
 
         if message is not None:
             tr = message.find("translation")
-            tr.text = to_text
+            tr.text = to_text.replace("\\n", "\n")
             # Marks current translation as done
             tr.attrib.pop("type")
 
